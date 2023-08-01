@@ -8,6 +8,12 @@ import {
 import GoogleProvider from 'next-auth/providers/google';
 import { prisma } from '@/lib/db';
 
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
+  }
+}
+
 declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
@@ -21,12 +27,6 @@ declare module 'next-auth' {
   //   // ...other properties
   //   // role: UserRole;
   // }
-}
-
-declare module 'next-auth/jwt' {
-  interface JWT {
-    id: string;
-  }
 }
 
 export const authOptions: NextAuthOptions = {

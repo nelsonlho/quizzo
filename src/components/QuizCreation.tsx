@@ -19,7 +19,7 @@ import { BookOpen, CopyCheck } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/use-toast';
 import axios, { AxiosError } from 'axios';
-// import { useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import {
   Card,
@@ -28,7 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import LoadingQuestions from '../LoadingQuestions';
+// import LoadingQuestions from '../LoadingQuestions';
 
 type Props = {
   topic: string;
@@ -41,12 +41,12 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
   const [showLoader, setShowLoader] = React.useState(false);
   const [finishedLoading, setFinishedLoading] = React.useState(false);
   const { toast } = useToast();
-  //   const { mutate: getQuestions, isLoading } = useMutation({
-  //     mutationFn: async ({ amount, topic, type }: Input) => {
-  //       const response = await axios.post('/api/game', { amount, topic, type });
-  //       return response.data;
-  //     },
-  //   });
+  const { mutate: getQuestions, isLoading } = useMutation({
+    mutationFn: async ({ amount, topic, type }: Input) => {
+      const response = await axios.post('/api/game', { amount, topic, type });
+      return response.data;
+    },
+  });
 
   const form = useForm<Input>({
     resolver: zodResolver(quizCreationSchema),
@@ -62,15 +62,15 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
     getQuestions(data, {
       onError: (error) => {
         setShowLoader(false);
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 500) {
-            toast({
-              title: 'Error',
-              description: 'Something went wrong. Please try again later.',
-              variant: 'destructive',
-            });
-          }
-        }
+        // if (error instanceof AxiosError ) {
+        //   if (error.response?.status === 500) {
+        //     toast({
+        //       title: 'Error',
+        //       description: 'Something went wrong. Please try again later.',
+        //       variant: 'destructive',
+        //     });
+        //   }
+        // }
       },
       onSuccess: ({ gameId }: { gameId: string }) => {
         setFinishedLoading(true);

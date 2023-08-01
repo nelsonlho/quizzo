@@ -1,6 +1,7 @@
 import { strict_output } from '@/lib/gpt';
-import { getAuthSession } from '@/lib/nextauth';
+import { authOptions, getAuthSession } from '@/lib/nextauth';
 import { quizCreationSchema } from '@/schemas/form/quiz';
+import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
@@ -61,7 +62,7 @@ export async function POST(req: Request, res: Response) {
         }
       );
     } else {
-      console.error('elle gpt error', error);
+      console.error('elle gpt error', JSON.stringify(error));
       return NextResponse.json(
         { error: 'An unexpected error occurred.' },
         {
