@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import axios from 'axios';
 
+const baseUrl =
+  process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
 export async function POST(req: Request, res: Response) {
   try {
     const session = await getAuthSession();
@@ -42,14 +44,11 @@ export async function POST(req: Request, res: Response) {
       },
     });
 
-    const { data } = await axios.post(
-      `${process.env.API_URL as string}/api/questions`,
-      {
-        amount,
-        topic,
-        type,
-      }
-    );
+    const { data } = await axios.post(`${baseUrl}/api/questions`, {
+      amount,
+      topic,
+      type,
+    });
 
     if (type === 'mcq') {
       type mcqQuestion = {
