@@ -1,25 +1,21 @@
 import { prisma } from '@/lib/db';
-import { authOptions, getAuthSession } from '@/lib/nextauth';
+import { getAuthSession } from '@/lib/nextauth';
 import { quizCreationSchema } from '@/schemas/form/quiz';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import axios from 'axios';
-import { getServerSession } from 'next-auth';
 
 export async function POST(req: Request, res: Response) {
   try {
-    const serverSession = await getServerSession(authOptions);
-
     const session = await getAuthSession();
-    console.log({ serverSession, session });
-    // if (!session?.user) {
-    //   return NextResponse.json(
-    //     { error: 'You must be logged in to create a game.' },
-    //     {
-    //       status: 401,
-    //     }
-    //   );
-    // }
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: 'You must be logged in to create a game.' },
+        {
+          status: 401,
+        }
+      );
+    }
     const body = await req.json();
     const { topic, type, amount } = quizCreationSchema.parse(body);
     const game = await prisma.game.create({
@@ -30,20 +26,21 @@ export async function POST(req: Request, res: Response) {
         topic,
       },
     });
-    // await prisma.topic_count.upsert({
-    //   where: {
-    //     topic,
-    //   },
-    //   create: {
-    //     topic,
-    //     count: 1,
-    //   },
-    //   update: {
-    //     count: {
-    //       increment: 1,
-    //     },
-    //   },
-    // });
+
+    await prisma.topicCount.upsert({
+      where: {
+        topic,
+      },
+      create: {
+        topic,
+        count: 1,
+      },
+      update: {
+        count: {
+          increment: 1,
+        },
+      },
+    });
 
     const { data } = await axios.post(
       `${process.env.API_URL as string}/api/questions`,
@@ -109,6 +106,7 @@ export async function POST(req: Request, res: Response) {
         }
       );
     } else {
+      console.log(JSON.stringify(error));
       return NextResponse.json(
         { error: 'An unexpected error occurred.' },
         {
@@ -164,6 +162,7 @@ export async function GET(req: Request, res: Response) {
       }
     );
   } catch (error) {
+    console.log(JSON.stringify(error));
     return NextResponse.json(
       { error: 'An unexpected error occurred.' },
       {

@@ -134,7 +134,7 @@ export async function strict_output(
           }
         }
       }
-
+      console.log({ output });
       return list_input ? output : output[0];
     } catch (e) {
       error_msg = `\n\nResult: ${res}\n\nError message: ${e}`;

@@ -1,22 +1,24 @@
-import QuizCreation from '@/components/QuizCreation';
 import { getAuthSession } from '@/lib/nextauth';
 import { redirect } from 'next/navigation';
-
-type Props = {};
+import QuizCreation from '@/components/forms/QuizCreation';
 
 export const metadata = {
   title: 'Quiz | Quizzo',
-};
-const QuizPage = async () => {
-  const session = await getAuthSession();
-  if (!session?.user) {
-    return redirect('/');
-  }
-  return (
-    <div>
-      <QuizCreation />
-    </div>
-  );
+  description: 'Quiz yourself on anything!',
 };
 
-export default QuizPage;
+interface Props {
+  searchParams: {
+    topic?: string;
+  };
+}
+
+const Quiz = async ({ searchParams }: Props) => {
+  const session = await getAuthSession();
+  if (!session?.user) {
+    redirect('/');
+  }
+  return <QuizCreation topic={searchParams.topic ?? ''} />;
+};
+
+export default Quiz;

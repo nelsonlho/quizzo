@@ -1,13 +1,13 @@
 generator client {
   provider = "prisma-client-js"
 }
- 
+
 datasource db {
   provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
- 
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -21,12 +21,12 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerAccountId])
-  @@index([userId], name: "userId")
+  @@index([userId])
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
@@ -34,9 +34,9 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId], name: "userId")
+  @@index([userId])
 }
- 
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -64,6 +64,12 @@ model Game {
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model TopicCount {
+  id    String @id @default(cuid())
+  topic String @unique
+  count Int
 }
 
 model Question {

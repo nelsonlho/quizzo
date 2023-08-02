@@ -28,7 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-// import LoadingQuestions from '../LoadingQuestions';
+import LoadingQuestions from '@/components/LoadingQuestions';
 
 type Props = {
   topic: string;
@@ -62,15 +62,21 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
     getQuestions(data, {
       onError: (error) => {
         setShowLoader(false);
-        // if (error instanceof AxiosError ) {
-        //   if (error.response?.status === 500) {
-        //     toast({
-        //       title: 'Error',
-        //       description: 'Something went wrong. Please try again later.',
-        //       variant: 'destructive',
-        //     });
-        //   }
-        // }
+        console.log({ error });
+        toast({
+          title: 'Error',
+          description: 'Something went wrong. Please try again later.',
+          variant: 'destructive',
+        });
+        if (axios.isAxiosError(error)) {
+          if ((error as AxiosError).response?.status === 500) {
+            toast({
+              title: 'Error',
+              description: 'Something went wrong. Please try again later.',
+              variant: 'destructive',
+            });
+          }
+        }
       },
       onSuccess: ({ gameId }: { gameId: string }) => {
         setFinishedLoading(true);
@@ -86,9 +92,9 @@ const QuizCreation = ({ topic: topicParam }: Props) => {
   };
   form.watch();
 
-  //   if (showLoader) {
-  //     return <LoadingQuestions finished={finishedLoading} />;
-  //   }
+  if (showLoader) {
+    return <LoadingQuestions finished={finishedLoading} />;
+  }
 
   return (
     <div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
